@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -21,7 +23,10 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.vuhungtran.happyplaces.databinding.ActivityAddHappyPlaceBinding
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -86,8 +91,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         val selectedImageBitmap =
                             MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
 
-//                        saveImageToInternalStorage =
-//                            saveImageToInternalStorage(selectedImageBitmap)
+                        saveImageToInternalStorage =
+                            saveImageToInternalStorage(selectedImageBitmap)
                         Log.e("Saved Image : ", "Path :: $saveImageToInternalStorage")
 
                         binding?.ivPlaceImage?.setImageBitmap(selectedImageBitmap) // Set the selected image from GALLERY to imageView.
@@ -101,8 +106,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
                 val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap // Bitmap from camera
 
-//                saveImageToInternalStorage =
-//                    saveImageToInternalStorage(thumbnail)
+                saveImageToInternalStorage =
+                    saveImageToInternalStorage(thumbnail)
                 Log.e("Saved Image : ", "Path :: $saveImageToInternalStorage")
 
                 binding?.ivPlaceImage?.setImageBitmap(thumbnail) // Set to the imageView.
@@ -221,6 +226,46 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }.show()
+    }
+
+    /**
+     * A function to save a copy of an image to internal storage for HappyPlaceApp to use.
+     */
+    private fun saveImageToInternalStorage(bitmap: Bitmap): Uri {
+        // Get context wrapper instance
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initializing a new file
+        // The bellow line return a directory in internal storage
+        /**
+         * The Mode Private here is
+         * File creation mode: the default mode, where the created file can only
+         * be accessed by the calling application (or all applications sharing the
+         * same user ID).
+         */
+        var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
+
+        // Create a file to save the image
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+        try {
+            // Get the file output stream
+            val stream: OutputStream = FileOutputStream(file)
+
+            // Compress bitmap
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+
+            // Flush the stream
+            stream.flush()
+
+            // Close stream
+            stream.close()
+        } catch (e: IOException) { // Catch the exception
+            e.printStackTrace()
+        }
+
+        // Return the saved image uri
+        return Uri.parse(file.absolutePath)
     }
 
     companion object {
