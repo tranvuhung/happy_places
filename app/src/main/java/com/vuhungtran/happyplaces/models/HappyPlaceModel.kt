@@ -1,5 +1,7 @@
 package com.vuhungtran.happyplaces.models
 
+import java.io.Serializable
+
 class HappyPlaceModel (
     val id: Int,
     val title: String,
@@ -8,4 +10,4 @@ class HappyPlaceModel (
     val date: String,
     val location: String,
     val latitude: Double,
-    val longitude: Double)
+    val longitude: Double) : Serializable

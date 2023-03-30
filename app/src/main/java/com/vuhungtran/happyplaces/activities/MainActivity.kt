@@ -72,8 +72,16 @@ class MainActivity : AppCompatActivity() {
         placesAdapter.setOnClickListener(object : HappyPlacesAdapter.OnClickListener {
             override fun onClick(position: Int, model: HappyPlaceModel) {
                 val intent = Intent(this@MainActivity, HappyPlaceDetailActivity::class.java)
+                intent.putExtra(EXTRA_PLACE_DETAILS, model)
                 startActivity(intent)
             }
         })
+    }
+
+    companion object {
+        // TODO (Step 2: Create a constant which will be used to put and get the data using intent from one activity to another.)
+        // START
+        internal const val EXTRA_PLACE_DETAILS = "extra_place_details"
+        // END
     }
 }
