@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         result ->
         if(result.resultCode == Activity.RESULT_OK){
-            val data: Intent? = result.data
             getHappyPlacesListFromLocalDB()
         }else{
             Log.e("Activity", "Cancelled or Back Pressed")
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.notifyEditItem(
                     this@MainActivity,
                     viewHolder.adapterPosition,
-                    ADD_PLACE_ACTIVITY_REQUEST_CODE
+                    ADD_PLACE_ACTIVITY_REQUEST_CODE, resultLauncher
                 )
             }
         }
@@ -98,7 +97,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
-        // TODO (Step 2: Create a constant which will be used to put and get the data using intent from one activity to another.)
         // START
         internal const val EXTRA_PLACE_DETAILS = "extra_place_details"
         // END

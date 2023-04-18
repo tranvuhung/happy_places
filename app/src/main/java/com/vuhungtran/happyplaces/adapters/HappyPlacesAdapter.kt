@@ -7,6 +7,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import com.vuhungtran.happyplaces.R
 import com.vuhungtran.happyplaces.activities.AddHappyPlaceActivity
@@ -51,13 +52,10 @@ open class HappyPlacesAdapter(private val context: Context,
     }
 
     // Step 4: Create a function to edit the happy place details which is inserted earlier and pass the details through intent.
-    fun notifyEditItem(activity: Activity, position: Int, requestCode: Int){
+    fun notifyEditItem(activity: Activity, position: Int, requestCode: Int, resultLauncher:  ActivityResultLauncher<Intent>){
         val intent = Intent(context, AddHappyPlaceActivity::class.java)
         intent.putExtra(MainActivity.EXTRA_PLACE_DETAILS, list[position])
-        activity.startActivityForResult(
-            intent,
-            requestCode
-        ) // Activity is started with requestCode
+        resultLauncher.launch(intent)
 
         notifyItemChanged(position) // Notify any registered observers that the item at position has changed.
     }
