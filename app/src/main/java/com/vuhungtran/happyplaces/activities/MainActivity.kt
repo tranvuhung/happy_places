@@ -7,11 +7,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.vuhungtran.happyplaces.adapters.HappyPlacesAdapter
 import com.vuhungtran.happyplaces.database.DatabaseHandler
 import com.vuhungtran.happyplaces.databinding.ActivityMainBinding
 import com.vuhungtran.happyplaces.models.HappyPlaceModel
+import kotlinx.android.synthetic.main.activity_main.*
+import pl.kitek.rvswipetodelete.SwipeToEditCallback
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
@@ -76,9 +80,24 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+
+        val editSwipeHandler = object : SwipeToEditCallback(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = rv_happy_places_list.adapter as HappyPlacesAdapter
+                adapter.notifyEditItem(
+                    this@MainActivity,
+                    viewHolder.adapterPosition,
+                    ADD_PLACE_ACTIVITY_REQUEST_CODE
+                )
+            }
+        }
+
+        val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
+        editItemTouchHelper.attachToRecyclerView(rv_happy_places_list)
     }
 
     companion object {
+        private const val ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
         // TODO (Step 2: Create a constant which will be used to put and get the data using intent from one activity to another.)
         // START
         internal const val EXTRA_PLACE_DETAILS = "extra_place_details"
